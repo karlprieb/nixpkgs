@@ -1,26 +1,35 @@
 { lib
 , buildGoModule
 , fetchFromGitHub
+, fetchYarnDeps
+, fixup_yarn_lock
 , grafana-agent
 , nixosTests
+, nodejs
 , stdenv
 , systemd
 , testers
+, yarn
 }:
 
 buildGoModule rec {
   pname = "grafana-agent";
-  version = "0.34.3";
+  version = "0.36.0";
 
   src = fetchFromGitHub {
     owner = "grafana";
     repo = "agent";
     rev = "v${version}";
-    hash = "sha256-llHMTuNWGipL732L+uCupILvomhwZMFT8tJaFkBs+AQ=";
+    hash = "sha256-YUEla8VvLi0H0Utu0vQNqSbZH8C9BeF8BGWRb2R61P8=";
   };
 
-  vendorHash = "sha256-x9c6xRk1Ska+kqoFhAJ9ei35Lg8wsgDpZpfxJ3UExfg=";
+  vendorHash = "sha256-Si7qZYq23XlWFPp+C5qIJw7n0Zk/Rx+yo643m+gSRcg=";
   proxyVendor = true; # darwin/linux hash mismatch
+
+  frontendYarnOfflineCache = fetchYarnDeps {
+    yarnLock = src + "/web/ui/yarn.lock";
+    hash = "sha256-sUFxuliLupGEJY1xFA2V4W2gwHxtUgst3Vrywh1owAo=";
+  };
 
   ldflags = let
     prefix = "github.com/grafana/agent/pkg/build";
@@ -34,7 +43,10 @@ buildGoModule rec {
     "-X ${prefix}.BuildDate=1980-01-01T00:00:00Z"
   ];
 
+  nativeBuildInputs = [ fixup_yarn_lock nodejs yarn ];
+
   tags = [
+    "builtinassets"
     "nonetwork"
     "nodocker"
     "promtail_journal_enabled"
@@ -43,7 +55,26 @@ buildGoModule rec {
   subPackages = [
     "cmd/grafana-agent"
     "cmd/grafana-agentctl"
+    "web/ui"
   ];
+
+  preBuild = ''
+    export HOME="$TMPDIR"
+
+    pushd web/ui
+    fixup_yarn_lock yarn.lock
+    yarn config --offline set yarn-offline-mirror $frontendYarnOfflineCache
+    yarn install --offline --frozen-lockfile --ignore-platform --ignore-scripts --no-progress --non-interactive
+    patchShebangs node_modules
+    yarn --offline run build
+    popd
+  '';
+
+  # do not pass preBuild to go-modules.drv, as it would otherwise fail to build.
+  # but even if it would work, it simply isn't needed in that scope.
+  overrideModAttrs = (_: {
+    preBuild = null;
+  });
 
   # uses go-systemd, which uses libsystemd headers
   # https://github.com/coreos/go-systemd/issues/351
@@ -73,5 +104,6 @@ buildGoModule rec {
     homepage = "https://grafana.com/products/cloud";
     changelog = "https://github.com/grafana/agent/blob/${src.rev}/CHANGELOG.md";
     maintainers = with lib.maintainers; [ flokli emilylange ];
+    mainProgram = "grafana-agent";
   };
 }

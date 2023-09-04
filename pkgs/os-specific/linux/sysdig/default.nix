@@ -5,8 +5,8 @@
 
 let
   # Compare with https://github.com/draios/sysdig/blob/dev/cmake/modules/falcosecurity-libs.cmake
-  libsRev = "0.11.0";
-  libsSha256 = "sha256-QvRTz3yMS6i+qdiSG51wvho9D7w/dMQhY72OYd3qOgU=";
+  libsRev = "59fb313475b82f842e9e9bbc1e0e629428c0a4cf";
+  libsSha256 = "sha256-IjzLbCOpB6EgPDgkGIyg1dNxHfYgU10OLgXrDOPmoTs=";
 
   # Compare with https://github.com/falcosecurity/libs/blob/master/cmake/modules/valijson.cmake#L17
   valijson = fetchFromGitHub {
@@ -20,27 +20,27 @@ let
   driver = fetchFromGitHub {
     owner = "falcosecurity";
     repo = "libs";
-    rev = "5.0.1+driver";
-    sha256 = "sha256-CQ6QTcyTnThpJHDXgOM1Zdp5SG7rngp9XtEM+2mS8ro=";
+    rev = libsRev;
+    sha256 = libsSha256;
   };
 
 in
 stdenv.mkDerivation rec {
   pname = "sysdig";
-  version = "0.31.5";
+  version = "0.33.1";
 
   src = fetchFromGitHub {
     owner = "draios";
     repo = "sysdig";
     rev = version;
-    sha256 = "sha256-RuoPqVulATtn7jSga/8fECs7weNfjt/YFh7iHmfCKjw=";
+    sha256 = "sha256-qcJ9EcePrsKic+wgsck+pTrRdQic0xhzguH4EYVP0gk=";
   };
 
-  # to fix the build against the latest kernel
   patches = [
+    # https://github.com/draios/sysdig/pull/2024
     (fetchpatch {
-      url = "https://github.com/draios/sysdig/compare/35ded9aab87801281e22898242e24e0bc63873b2...954e6fc6238f21d4870a491395d68a7dd3062aa9.patch";
-      sha256 = "sha256-gnLURnv8FW5LvqjbreCf9DPGdBcn7rfizGeznFqJ+Fk=";
+      url = "https://github.com/draios/sysdig/commit/d9515aad2be660b2ba7ec8c0b4fb2467a10434af.patch";
+      sha256 = "sha256-3m+Rn8BZS8U8QTBDJ6x7kQbH6BE3HKgt1iNnRjPEr8k=";
     })
   ];
 

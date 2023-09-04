@@ -7,13 +7,13 @@
 
 buildGoModule rec {
   pname = "grype";
-  version = "0.63.1";
+  version = "0.66.0";
 
   src = fetchFromGitHub {
     owner = "anchore";
     repo = pname;
     rev = "refs/tags/v${version}";
-    hash = "sha256-mygfK8UMvjpqnbo+Zz1x+G9zDZa7QTotvWaERVkYaSo=";
+    hash = "sha256-oZSXUwWucSyd2JYx0TkYfxgP6NZjjA2bhTrlOJSNh8c=";
     # populate values that require us to use git. By doing this in postFetch we
     # can delete .git afterwards and maintain better reproducibility of the src.
     leaveDotGit = true;
@@ -28,7 +28,7 @@ buildGoModule rec {
 
   proxyVendor = true;
 
-  vendorHash = "sha256-T1dfdXlYCOdeZT1rgWgIrh9Jpl70csRI9xX/7QZGNag=";
+  vendorHash = "sha256-Ur68es1eXsIldXqZjBbtMoK2fjvTIZ+ae2cWaiNzfBg=";
 
   nativeBuildInputs = [
     installShellFiles
@@ -38,16 +38,16 @@ buildGoModule rec {
     openssl
   ];
 
-  subPackages = [ "." ];
+  subPackages = [ "cmd/grype" ];
 
   excludedPackages = "test/integration";
 
   ldflags = [
     "-s"
     "-w"
-    "-X github.com/anchore/grype/internal/version.version=${version}"
-    "-X github.com/anchore/grype/internal/version.gitDescription=v${version}"
-    "-X github.com/anchore/grype/internal/version.gitTreeState=clean"
+    "-X=github.com/anchore/grype/internal/version.version=${version}"
+    "-X=github.com/anchore/grype/internal/version.gitDescription=v${version}"
+    "-X=github.com/anchore/grype/internal/version.gitTreeState=clean"
   ];
 
   preBuild = ''
@@ -80,8 +80,7 @@ buildGoModule rec {
       --replace "TestRegistryAuth" "SkipRegistryAuth"
     substituteInPlace test/cli/sbom_input_test.go \
       --replace "TestSBOMInput_FromStdin" "SkipSBOMInput_FromStdin" \
-      --replace "TestSBOMInput_AsArgument" "SkipSBOMInput_AsArgument" \
-      --replace "TestAttestationInput_AsArgument" "SkipAttestationInput_AsArgument"
+      --replace "TestSBOMInput_AsArgument" "SkipSBOMInput_AsArgument"
     substituteInPlace test/cli/subprocess_test.go \
       --replace "TestSubprocessStdin" "SkipSubprocessStdin"
 
@@ -105,6 +104,6 @@ buildGoModule rec {
       container image or filesystem to find known vulnerabilities.
     '';
     license = with licenses; [ asl20 ];
-    maintainers = with maintainers; [ fab jk ];
+    maintainers = with maintainers; [ fab jk kashw2 ];
   };
 }

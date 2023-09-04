@@ -38,15 +38,20 @@
 
 buildPythonPackage rec {
   pname = "mlflow";
-  version = "2.4.1";
+  version = "2.5.0";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-ZZj3j37OWalIBXOvV7CXCKMoPs6I8Zbl0XLCBAzsMj8=";
+    hash = "sha256-+ZKujqnHNQI0S69IxOxEeqnvv6iWW8CQho5hYyNPTrA=";
   };
+
+  postPatch = ''
+    substituteInPlace requirements/core-requirements.txt \
+      --replace "gunicorn<21" "gunicorn"
+  '';
 
   # Remove currently broken dependency `shap`, a model explainability package.
   # This seems quite unprincipled especially with tests not being enabled,

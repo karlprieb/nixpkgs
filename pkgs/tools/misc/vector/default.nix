@@ -45,6 +45,10 @@ rustPlatform.buildRustPackage {
     hash = "sha256-+ATOHx+LQLQV4nMdj1FRRvDTqGCTbX9kl290AbY9Vw0=";
   };
 
+  patches = [
+    ./rust-1.71-unnecessary-mut.diff
+  ];
+
   cargoLock = {
     lockFile = ./Cargo.lock;
     outputHashes = {
@@ -122,5 +126,6 @@ rustPlatform.buildRustPackage {
     license = licenses.mpl20;
     maintainers = with maintainers; [ thoughtpolice happysalada ];
     platforms = with platforms; all;
+    mainProgram = "vector";
   };
 }

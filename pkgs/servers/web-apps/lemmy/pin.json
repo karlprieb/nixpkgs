@@ -1,7 +1,8 @@
 {
-  "version": "0.18.1",
-  "serverSha256": "sha256-jYbrbIRyXo2G113ReG32oZ56ed2FEB/ZBcqYAxoxzGQ=",
-  "serverCargoSha256": "sha256-7DNMNPSjzYY45DlR6Eo2q6QdwrMrRb51cFOnXfOuub0=",
-  "uiSha256": "sha256-tc7fGA4okIv+3kq5t6I+EN+owdekCgAdk0EtkDgodIU=",
-  "uiYarnDepsSha256": "sha256-/T1PQ0XsGY82/RlLq94hJgv8Yx1bIf2gcklhgtPu1RM="
+  "serverVersion": "0.18.4",
+  "uiVersion": "0.18.4",
+  "serverHash": "sha256-J+kjsirEcLz0th3IGVheSShVLbQma1Eip329/q5/3S8=",
+  "serverCargoHash": "sha256-0UDhHa2QvHoNYJIArpc/o+lkq87tBX/XVgXsr7y/+Rk=",
+  "uiHash": "sha256-E/rSNWVjiZE5Hl0iIocQfkIdOFSeB0zYXQDq9A3h3lI=",
+  "uiYarnDepsHash": "sha256-rLP1CQd75nVfI6C0sC21TUskzVfbGHm2fblcYr6JcGc="
 }

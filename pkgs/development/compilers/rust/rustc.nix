@@ -53,7 +53,7 @@ in stdenv.mkDerivation rec {
   NIX_LDFLAGS = toString (
        # when linking stage1 libstd: cc: undefined reference to `__cxa_begin_catch'
        optional (stdenv.isLinux && !withBundledLLVM) "--push-state --as-needed -lstdc++ --pop-state"
-    ++ optional (stdenv.isDarwin && !withBundledLLVM) "-lc++"
+    ++ optional (stdenv.isDarwin && !withBundledLLVM) "-lc++ -lc++abi"
     ++ optional stdenv.isDarwin "-rpath ${llvmSharedForHost}/lib");
 
   # Increase codegen units to introduce parallelism within the compiler.
@@ -75,6 +75,7 @@ in stdenv.mkDerivation rec {
     "--release-channel=stable"
     "--set=build.rustc=${rustc}/bin/rustc"
     "--set=build.cargo=${cargo}/bin/cargo"
+    "--tools=rustc,rust-analyzer-proc-macro-srv"
     "--enable-rpath"
     "--enable-vendor"
     "--build=${rust.toRustTargetSpec stdenv.buildPlatform}"
@@ -148,10 +149,6 @@ in stdenv.mkDerivation rec {
     patchShebangs src/etc
 
     ${optionalString (!withBundledLLVM) "rm -rf src/llvm"}
-
-    # Fix the configure script to not require curl as we won't use it
-    sed -i configure \
-      -e '/probe_need CFG_CURL curl/d'
 
     # Useful debugging parameter
     # export VERBOSE=1

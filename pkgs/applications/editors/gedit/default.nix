@@ -15,6 +15,7 @@
 , gsettings-desktop-schemas
 , wrapGAppsHook
 , gtk-doc
+, gobject-introspection
 , docbook-xsl-nons
 , ninja
 , libsoup
@@ -55,6 +56,7 @@ stdenv.mkDerivation rec {
     vala
     wrapGAppsHook
     gtk-doc
+    gobject-introspection
     docbook-xsl-nons
   ];
 
@@ -85,7 +87,6 @@ stdenv.mkDerivation rec {
   passthru = {
     updateScript = gnome.updateScript {
       packageName = "gedit";
-      attrPath = "gnome.gedit";
     };
   };
 
@@ -95,5 +96,6 @@ stdenv.mkDerivation rec {
     maintainers = [ ];
     license = licenses.gpl2Plus;
     platforms = platforms.unix;
+    mainProgram = "gedit";
   };
 }

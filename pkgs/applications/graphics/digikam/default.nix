@@ -54,17 +54,17 @@
 , breeze-icons
 , oxygen
 
-, cudaSupport ? config.cudaSupport or false
+, cudaSupport ? config.cudaSupport
 , cudaPackages ? {}
 }:
 
 mkDerivation rec {
   pname   = "digikam";
-  version = "8.0.0";
+  version = "8.1.0";
 
   src = fetchurl {
     url = "mirror://kde/stable/${pname}/${version}/digiKam-${version}.tar.xz";
-    hash = "sha256-ECxxK2IJ/irId8mx0BnaytrxFa35FVcNJoFgZtFR6Ec=";
+    hash = "sha256-BQPANORF/0JPGKZxXAp6eb5KXgyCs+vEYaIc7DdFpbM=";
   };
 
   nativeBuildInputs = [
@@ -151,5 +151,6 @@ mkDerivation rec {
     license = licenses.gpl2;
     homepage = "https://www.digikam.org";
     platforms = platforms.linux;
+    mainProgram = "digikam";
   };
 }

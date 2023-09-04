@@ -1,4 +1,5 @@
 { lib
+, stdenv
 , asn1crypto
 , buildPythonPackage
 , defusedxml
@@ -38,16 +39,16 @@
 
 buildPythonPackage rec {
   pname = "dissect-target";
-  version = "3.10";
+  version = "3.11.1";
   format = "pyproject";
 
-  disabled = pythonOlder "3.10";
+  disabled = pythonOlder "3.11.1";
 
   src = fetchFromGitHub {
     owner = "fox-it";
     repo = "dissect.target";
     rev = "refs/tags/${version}";
-    hash = "sha256-zAcNkRwCnU/53h8/WsaGjCpgPovPb+5VOu/6SHXu31g=";
+    hash = "sha256-xT0PXah+sYzSDRoBU4OWBp+zhlinKRuQUDBLvos4zKk=";
   };
 
   SETUPTOOLS_SCM_PRETEND_VERSION = version;
@@ -109,7 +110,11 @@ buildPythonPackage rec {
     "test_tar_sensitive_drive_letter"
     # Tests compare dates and times
     "yum"
-  ];
+    # Filesystem access, windows defender tests
+    "test_defender_quarantine_recovery"
+  ] ++
+  # test is broken on Darwin
+  lib.optional stdenv.hostPlatform.isDarwin "test_fs_attrs_no_os_listxattr";
 
   disabledTestPaths = [
     # Tests are using Windows paths

@@ -214,6 +214,7 @@ in {
         ++ lib.optional config.virtualisation.libvirtd.enable (config.virtualisation.libvirtd.package);
       environment = {
         PYTHONPATH = "${cfg.package}/libexec/netdata/python.d/python_modules";
+        NETDATA_PIPENAME = "/run/netdata/ipc";
       } // lib.optionalAttrs (!cfg.enableAnalyticsReporting) {
         DO_NOT_TRACK = "1";
       };
@@ -225,7 +226,7 @@ in {
         ExecStart = "${cfg.package}/bin/netdata -P /run/netdata/netdata.pid -D -c /etc/netdata/netdata.conf";
         ExecReload = "${pkgs.util-linux}/bin/kill -s HUP -s USR1 -s USR2 $MAINPID";
         ExecStartPost = pkgs.writeShellScript "wait-for-netdata-up" ''
-          while [ "$(${pkgs.netdata}/bin/netdatacli ping)" != pong ]; do sleep 0.5; done
+          while [ "$(${cfg.package}/bin/netdatacli ping)" != pong ]; do sleep 0.5; done
         '';
 
         TimeoutStopSec = cfg.deadlineBeforeStopSec;

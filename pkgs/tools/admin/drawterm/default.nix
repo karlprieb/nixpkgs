@@ -1,6 +1,7 @@
 { stdenv
 , lib
-, fetchgit
+, fetchFrom9Front
+, unstableGitUpdater
 , installShellFiles
 , makeWrapper
 , xorg
@@ -15,16 +16,19 @@
 , config
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "drawterm";
-  version = "unstable-2023-06-27";
+  version = "unstable-2023-08-22";
 
-  src = fetchgit {
-    url = "git://git.9front.org/plan9front/drawterm";
-    rev = "36debf46ac184a22c6936345d22e4cfad995948c";
-    sha256 = "ebqw1jqeRC0FWeUIO/HaEovuwzU6+B48TjZbVJXByvA=";
+  src = fetchFrom9Front {
+    owner = "plan9front";
+    repo = "drawterm";
+    rev = "c91c6fac9d725716ca6ecc3002053f941137f24f";
+    hash = "sha256-oGcKRx1tP2jeshHhaCHPRKmwKQ3WPYK1tHGGt1/3oDU=";
   };
 
+  enableParallelBuilding = true;
+  strictDeps = true;
   nativeBuildInputs = [ installShellFiles ] ++ {
     linux = [ pkg-config wayland-scanner ];
     unix = [ makeWrapper ];
@@ -47,11 +51,12 @@ stdenv.mkDerivation rec {
       mv drawterm drawterm.bin
       install -Dm755 -t $out/bin/ drawterm.bin
       makeWrapper ${pulseaudio}/bin/padsp $out/bin/drawterm --add-flags $out/bin/drawterm.bin
-     '';
-  }."${config}" or (throw "unsupported CONF")  + ''
-      installManPage drawterm.1
+    '';
+  }."${config}" or (throw "unsupported CONF") + ''
+    installManPage drawterm.1
   '';
 
+  passthru.updateScript = unstableGitUpdater { shallowClone = false; };
 
   meta = with lib; {
     description = "Connect to Plan 9 CPU servers from other operating systems.";

@@ -13,12 +13,12 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "circt";
-  version = "1.44.0";
+  version = "1.53.0";
   src = fetchFromGitHub {
     owner = "llvm";
     repo = "circt";
     rev = "firtool-${version}";
-    sha256 = "sha256-92gGsuwz1AfQJe1kFsqm/75P+3QuSHzZEUbItOC5nGU=";
+    sha256 = "sha256-F3pGXZC4jSG9TV2sc5G9bQtKMY6xcPknwO0fqQ6uBoA=";
     fetchSubmodules = true;
   };
 
@@ -54,6 +54,9 @@ stdenv.mkDerivation rec {
 
   preConfigure = ''
     find ./test -name '*.mlir' -exec sed -i 's|/usr/bin/env|${coreutils}/bin/env|g' {} \;
+    # circt uses git to check its version, but when cloned on nix it can't access git.
+    # So this hard codes the version.
+    substituteInPlace cmake/modules/GenVersionFile.cmake --replace "unknown git version" "${src.rev}"
   '';
 
   installPhase = ''

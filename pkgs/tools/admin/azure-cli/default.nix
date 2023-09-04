@@ -1,27 +1,27 @@
 { stdenv, lib, python3, fetchPypi, fetchFromGitHub, installShellFiles }:
 
 let
-  version = "2.49.0";
-  srcName = "azure-cli-${version}-src";
+  version = "2.51.0";
 
   src = fetchFromGitHub {
-    name = srcName;
+    name = "azure-cli-${version}-src";
     owner = "Azure";
     repo = "azure-cli";
     rev = "azure-cli-${version}";
-    hash = "sha256-4R89RD4mDdhLdpgHQ8QT48cX+GzTLrSYPCwg0xWM8Ss=";
+    hash = "sha512-KjkR1YKvL5stfmIbrfzj9Ons4iYyiKQdLiRh7I7Dd43lvJwXaYLNjIYL5SOX3F3D9nmNxCb0qmYAQH0iEmyVjw==";
   };
 
   # put packages that needs to be overridden in the py package scope
   py = import ./python-packages.nix {
-    inherit stdenv lib src version python3 fetchPypi;
+    inherit stdenv src version python3 fetchPypi;
   };
 in
+
 py.pkgs.toPythonApplication (py.pkgs.buildAzureCliPackage {
   pname = "azure-cli";
   inherit version src;
 
-  sourceRoot = "${srcName}/src/azure-cli";
+  sourceRoot = "${src.name}/src/azure-cli";
 
   prePatch = ''
     substituteInPlace setup.py \
@@ -269,8 +269,19 @@ py.pkgs.toPythonApplication (py.pkgs.buildAzureCliPackage {
   meta = with lib; {
     homepage = "https://github.com/Azure/azure-cli";
     description = "Next generation multi-platform command line experience for Azure";
+    downloadPage = "https://github.com/Azure/azure-cli/releases/tag/azure-cli-${version}";
+    longDescription = ''
+      The Azure Command-Line Interface (CLI) is a cross-platform
+      command-line tool to connect to Azure and execute administrative
+      commands on Azure resources. It allows the execution of commands
+      through a terminal using interactive command-line prompts or a script.
+    '';
+    changelog = "https://github.com/MicrosoftDocs/azure-docs-cli/blob/main/docs-ref-conceptual/release-notes-azure-cli.md";
+    sourceProvenance = [ sourceTypes.fromSource ];
     license = licenses.mit;
-    maintainers = with maintainers; [ jonringer ];
+    mainProgram = "az";
+    maintainers = with maintainers; [ akechishiro jonringer ];
+    platforms = platforms.all;
   };
 })
 

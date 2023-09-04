@@ -9,7 +9,6 @@ lib.makeScope newScope (self:
       callPackage ../development/nim-packages/build-nim-package {
         inherit (buildPackages.buildPackages.nimPackages) nim_builder;
       };
-    fetchNimble = callPackage ../development/nim-packages/fetch-nimble { };
 
     asciigraph = callPackage ../development/nim-packages/asciigraph { };
 
@@ -32,6 +31,8 @@ lib.makeScope newScope (self:
 
     coap = callPackage  ../development/nim-packages/coap { };
 
+    db_connector = callPackage ../development/nim-packages/db_connector { };
+
     docopt = callPackage ../development/nim-packages/docopt { };
 
     eris = callPackage ../development/nim-packages/eris { };
@@ -45,7 +46,9 @@ lib.makeScope newScope (self:
     getdns = callPackage ../development/nim-packages/getdns {
       inherit (pkgs) getdns; };
 
-    hts-nim = callPackage ../development/nim-packages/hts-nim { };
+    hashlib = callPackage ../development/nim-packages/hashlib { };
+
+    hts = callPackage ../development/nim-packages/hts { };
 
     illwill = callPackage ../development/nim-packages/illwill { };
 
@@ -93,6 +96,8 @@ lib.makeScope newScope (self:
       inherit (pkgs) rocksdb;
     };
 
+    safeseq = callPackage ../development/nim-packages/safeseq { };
+
     safeset = callPackage ../development/nim-packages/safeset { };
 
     sass = callPackage ../development/nim-packages/sass { };
@@ -105,6 +110,8 @@ lib.makeScope newScope (self:
       callPackage ../development/nim-packages/snappy { inherit (pkgs) snappy; };
 
     nimraylib-now = callPackage ../development/nim-packages/nimraylib-now { };
+
+    smtp = callPackage ../development/nim-packages/smtp { };
 
     spry = callPackage ../development/nim-packages/spry { };
 
@@ -129,6 +136,8 @@ lib.makeScope newScope (self:
     unicodeplus = callPackage ../development/nim-packages/unicodeplus { };
 
     vmath = callPackage ../development/nim-packages/vmath { };
+
+    ws = callPackage ../development/nim-packages/ws { };
 
     x11 = callPackage ../development/nim-packages/x11 { };
 

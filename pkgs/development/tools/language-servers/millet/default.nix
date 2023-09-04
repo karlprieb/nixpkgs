@@ -2,20 +2,20 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "millet";
-  version = "0.12.5";
+  version = "0.13.0";
 
   src = fetchFromGitHub {
     owner = "azdavis";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-sG4mowQMBiFAgTO1Rf+NCD2/GRgaqmmEQ1oSxn3hGTM=";
+    hash = "sha256-q7p3TB7YsfROW+6MCbcGCPTIekEgqQBi0MUHkIuhtHc=";
   };
 
   cargoLock = {
     lockFile = ./Cargo.lock;
     outputHashes = {
-      "char-name-0.1.0" = "sha256-hElcqzsfU6c6HzOqnUpbz+jbNGk6qBS+uk4fo1PC86Y=";
-      "sml-libs-0.1.0" = "sha256-q3n4UfDcpDaN8v9UewAz2G26NeDDsZFuczS7N6nkl5Q=";
+      "char-name-0.1.0" = "sha256-uWKoRLEwbjndrtu30H0zysHLIXBqWa0SnYm6Iy1hUko=";
+      "sml-libs-0.1.0" = "sha256-zQrhH24XlA9SeQ+sVzaVwJwrm80TRIjFq99Vay7QEN8=";
     };
   };
 
@@ -30,7 +30,7 @@ rustPlatform.buildRustPackage rec {
   meta = with lib; {
     description = "A language server for Standard ML";
     homepage = "https://github.com/azdavis/millet";
-    changelog = "https://github.com/azdavis/millet/raw/v${version}/docs/CHANGELOG.md";
+    changelog = "https://github.com/azdavis/millet/blob/v${version}/docs/CHANGELOG.md";
     license = [ licenses.mit /* or */ licenses.asl20 ];
     maintainers = with maintainers; [ marsam ];
     mainProgram = "millet-ls";

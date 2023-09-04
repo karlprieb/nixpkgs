@@ -140,6 +140,7 @@ in buildFHSEnv rec {
 
     # SteamVR
     udev
+    dbus
 
     # Other things from runtime
     glib
@@ -199,7 +200,6 @@ in buildFHSEnv rec {
 
     # screeps dependencies
     gtk3
-    dbus
     zlib
     atk
     cairo
@@ -298,7 +298,7 @@ in buildFHSEnv rec {
     name = "steam-run";
 
     targetPkgs = commonTargetPkgs;
-    inherit multiPkgs profile extraInstallCommands;
+    inherit multiArch multiPkgs profile extraInstallCommands;
     inherit unshareIpc unsharePid;
 
     runScript = writeShellScript "steam-run" ''

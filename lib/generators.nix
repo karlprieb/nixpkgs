@@ -81,9 +81,10 @@ rec {
    */
   toKeyValue = {
     mkKeyValue ? mkKeyValueDefault {} "=",
-    listsAsDuplicateKeys ? false
+    listsAsDuplicateKeys ? false,
+    indent ? ""
   }:
-  let mkLine = k: v: mkKeyValue k v + "\n";
+  let mkLine = k: v: indent + mkKeyValue k v + "\n";
       mkLines = if listsAsDuplicateKeys
         then k: v: map (mkLine k) (if lib.isList v then v else [v])
         else k: v: [ (mkLine k v) ];
@@ -228,6 +229,14 @@ rec {
       toINI_ = toINI { inherit mkKeyValue mkSectionName; };
     in
       toINI_ (gitFlattenAttrs attrs);
+
+  # mkKeyValueDefault wrapper that handles dconf INI quirks.
+  # The main differences of the format is that it requires strings to be quoted.
+  mkDconfKeyValue = mkKeyValueDefault { mkValueString = v: toString (lib.gvariant.mkValue v); } "=";
+
+  # Generates INI in dconf keyfile style. See https://help.gnome.org/admin/system-admin-guide/stable/dconf-keyfiles.html.en
+  # for details.
+  toDconfINI = toINI { mkKeyValue = mkDconfKeyValue; };
 
   /* Generates JSON from an arbitrary (non-function) value.
     * For more information see the documentation of the builtin.

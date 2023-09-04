@@ -6,16 +6,16 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "argc";
-  version = "1.7.0";
+  version = "1.9.0";
 
   src = fetchFromGitHub {
     owner = "sigoden";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-B0oN5qYCShIsSvMFJB5EJPWOWM3Ubn8jl2gm+l5Wqg0=";
+    hash = "sha256-BM9MXokVXA5EJwr8F7Wg5LTE1xhmj9ttVXOMNJx0RRw=";
   };
 
-  cargoHash = "sha256-50ETDUKbK4oeVm9Ox44WVrAH5EAdH9F+sQk0WBTEQmY=";
+  cargoHash = "sha256-SScCPBERXScYJ9LlPcbIhwCikRum0F1tU3gZYaQRFTo=";
 
   nativeBuildInputs = [ installShellFiles ];
 

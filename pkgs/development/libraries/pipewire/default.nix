@@ -66,6 +66,8 @@
 , mysofaSupport ? true
 , libmysofa
 , tinycompress
+, ffadoSupport ? stdenv.buildPlatform.canExecute stdenv.hostPlatform
+, ffado
 }:
 
 let
@@ -73,7 +75,7 @@ let
 
   self = stdenv.mkDerivation rec {
     pname = "pipewire";
-    version = "0.3.71";
+    version = "0.3.78";
 
     outputs = [
       "out"
@@ -91,7 +93,7 @@ let
       owner = "pipewire";
       repo = "pipewire";
       rev = version;
-      sha256 = "sha256-NPYWl+WeI/z70gNHX1BAKslGFX634D7XrV04vuJgGOo=";
+      sha256 = "sha256-tiVuab8kugp9ZOKL/m8uZQps/pcrVihwB3rRf6SGuzc=";
     };
 
     patches = [
@@ -149,7 +151,8 @@ let
     ++ lib.optional raopSupport openssl
     ++ lib.optional rocSupport roc-toolkit
     ++ lib.optionals x11Support [ libcanberra xorg.libX11 xorg.libXfixes ]
-    ++ lib.optional mysofaSupport libmysofa;
+    ++ lib.optional mysofaSupport libmysofa
+    ++ lib.optional ffadoSupport ffado;
 
     # Valgrind binary is required for running one optional test.
     nativeCheckInputs = lib.optional withValgrind valgrind;
@@ -163,6 +166,7 @@ let
       "-Dlibjack-path=${placeholder "jack"}/lib"
       "-Dlibv4l2-path=${placeholder "out"}/lib"
       "-Dlibcamera=${mesonEnableFeature libcameraSupport}"
+      "-Dlibffado=${mesonEnableFeature ffadoSupport}"
       "-Droc=${mesonEnableFeature rocSupport}"
       "-Dlibpulse=${mesonEnableFeature pulseTunnelSupport}"
       "-Davahi=${mesonEnableFeature zeroconfSupport}"
@@ -217,10 +221,11 @@ let
       moveToOutput "bin/pw-jack" "$jack"
     '';
 
-    passthru.tests = nixosTests.installed-tests.pipewire;
+    passthru.tests.installed-tests = nixosTests.installed-tests.pipewire;
 
     meta = with lib; {
       description = "Server and user space API to deal with multimedia pipelines";
+      changelog = "https://gitlab.freedesktop.org/pipewire/pipewire/-/releases/${version}";
       homepage = "https://pipewire.org/";
       license = licenses.mit;
       platforms = platforms.linux;

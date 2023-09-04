@@ -51,6 +51,8 @@
 
 # the derivation at which the `-B` and `-L` flags added by `useCcForLibs` will point
 , gccForLibs ? if useCcForLibs then cc else null
+, fortify-headers ? null
+, includeFortifyHeaders ? null
 }:
 
 with lib;
@@ -65,6 +67,10 @@ let
   stdenv = stdenvNoCC;
   inherit (stdenv) hostPlatform targetPlatform;
 
+  includeFortifyHeaders' = if includeFortifyHeaders != null
+    then includeFortifyHeaders
+    else (targetPlatform.libc == "musl" && isGNU);
+
   # Prefix for binaries. Customarily ends with a dash separator.
   #
   # TODO(@Ericson2314) Make unconditional, or optional but always true by
@@ -75,14 +81,14 @@ let
   ccVersion = lib.getVersion cc;
   ccName = lib.removePrefix targetPrefix (lib.getName cc);
 
-  libc_bin = if libc == null then "" else getBin libc;
-  libc_dev = if libc == null then "" else getDev libc;
-  libc_lib = if libc == null then "" else getLib libc;
+  libc_bin = optionalString (libc != null) (getBin libc);
+  libc_dev = optionalString (libc != null) (getDev libc);
+  libc_lib = optionalString (libc != null) (getLib libc);
   cc_solib = getLib cc
     + optionalString (targetPlatform != hostPlatform) "/${targetPlatform.config}";
 
   # The wrapper scripts use 'cat' and 'grep', so we may need coreutils.
-  coreutils_bin = if nativeTools then "" else getBin coreutils;
+  coreutils_bin = optionalString (!nativeTools) (getBin coreutils);
 
   # The "suffix salt" is a arbitrary string added in the end of env vars
   # defined by cc-wrapper's hooks so that multiple cc-wrappers can be used
@@ -165,6 +171,8 @@ let
     stdenv.targetPlatform.darwinMinVersionVariable;
 in
 
+assert includeFortifyHeaders' -> fortify-headers != null;
+
 # Ensure bintools matches
 assert libc_bin == bintools.libc_bin;
 assert libc_dev == bintools.libc_dev;
@@ -176,7 +184,7 @@ assert nativePrefix == bintools.nativePrefix;
 stdenv.mkDerivation {
   pname = targetPrefix
     + (if name != "" then name else "${ccName}-wrapper");
-  version = if cc == null then "" else ccVersion;
+  version = optionalString (cc != null) ccVersion;
 
   preferLocalBuild = true;
 
@@ -189,7 +197,7 @@ stdenv.mkDerivation {
     # Binutils, and Apple's "cctools"; "bintools" as an attempt to find an
     # unused middle-ground name that evokes both.
     inherit bintools;
-    inherit cc libc nativeTools nativeLibc nativePrefix isGNU isClang;
+    inherit cc libc libcxx nativeTools nativeLibc nativePrefix isGNU isClang;
 
     emacsBufferSetup = pkgs: ''
       ; We should handle propagation here too
@@ -414,6 +422,16 @@ stdenv.mkDerivation {
 
       echo "${libc_lib}" > $out/nix-support/orig-libc
       echo "${libc_dev}" > $out/nix-support/orig-libc-dev
+    ''
+    # fortify-headers is a set of wrapper headers that augment libc
+    # and use #include_next to pass through to libc's true
+    # implementations, so must appear before them in search order.
+    # in theory a correctly placed -idirafter could be used, but in
+    # practice the compiler may have been built with a --with-headers
+    # like option that forces the libc headers before all -idirafter,
+    # hence -isystem here.
+    + optionalString includeFortifyHeaders' ''
+      echo "-isystem ${fortify-headers}/include" >> $out/nix-support/libc-cflags
     '')
 
     ##
@@ -609,13 +627,15 @@ stdenv.mkDerivation {
 
 
   env = {
+    inherit isClang;
+
     # for substitution in utils.bash
     expandResponseParams = "${expand-response-params}/bin/expand-response-params";
     shell = getBin shell + shell.shellPath or "";
-    gnugrep_bin = if nativeTools then "" else gnugrep;
+    gnugrep_bin = optionalString (!nativeTools) gnugrep;
     # stdenv.cc.cc should not be null and we have nothing better for now.
     # if the native impure bootstrap is gotten rid of this can become `inherit cc;` again.
-    cc = if nativeTools then "" else cc;
+    cc = optionalString (!nativeTools) cc;
     wrapperName = "CC_WRAPPER";
     inherit suffixSalt coreutils_bin bintools;
     inherit libc_bin libc_dev libc_lib;

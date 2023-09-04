@@ -17,19 +17,19 @@
 , makeDesktopItem
 , copyDesktopItems
 , makeWrapper
-, nodePackages
+, asar
 , python3
 }:
 
 let
   pname = "pulsar";
-  version = "1.106.0";
+  version = "1.108.0";
 
   sourcesPath = {
     x86_64-linux.tarname = "Linux.${pname}-${version}.tar.gz";
-    x86_64-linux.hash = "sha256-Wd0z6kHd6qZgrgZBxZQjwVC1dDqYtJ94L7aAnbuJoO8=";
+    x86_64-linux.hash = "sha256-9wxMKekowNkFX+m3h2ZeTXu/uMLyPi6IIbseJ16shG4=";
     aarch64-linux.tarname = "ARM.Linux.${pname}-${version}-arm64.tar.gz";
-    aarch64-linux.hash = "sha256-Xadjqw8PRrq0ksif6te0gxn8xeYTCYnJcsrezfl2SYs=";
+    aarch64-linux.hash = "sha256-GdPnmhMZR3Y2WB2j98JEWomdKFZuTgxN8oga/tBwA4U=";
   }.${stdenv.hostPlatform.system} or (throw "Unsupported system: ${stdenv.hostPlatform.system}");
 
   additionalLibs = lib.makeLibraryPath [
@@ -60,7 +60,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     wrapGAppsHook
     copyDesktopItems
-    nodePackages.asar
+    asar
   ];
 
   buildInputs = [

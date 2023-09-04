@@ -35,24 +35,23 @@
                           ++ ["${stdenv.hostPlatform.qemuArch}-softmmu"])
                     else null)
 , nixosTestRunner ? false
-, doCheck ? false
-, qemu  # for passthru.tests
+, gitUpdater
 }:
 
 let
   hexagonSupport = hostCpuTargets == null || lib.elem "hexagon" hostCpuTargets;
 in
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "qemu"
     + lib.optionalString xenSupport "-xen"
     + lib.optionalString hostCpuOnly "-host-cpu-only"
     + lib.optionalString nixosTestRunner "-for-vm-tests";
-  version = "8.0.2";
+  version = "8.1.0";
 
   src = fetchurl {
-    url = "https://download.qemu.org/qemu-${version}.tar.xz";
-    sha256 = "8GCr1DX75nlBJeLDmFaP/Dz6VABCWWkHqLGO3KNM9qU=";
+    url = "https://download.qemu.org/qemu-${finalAttrs.version}.tar.xz";
+    hash = "sha256-cQwQEZjjNNR2Lu9l9km8Q/qKXddTA1VLis/sPrJfDlU=";
   };
 
   depsBuildBuild = [ buildPackages.stdenv.cc ]
@@ -154,9 +153,6 @@ stdenv.mkDerivation rec {
     "--enable-tools"
     "--localstatedir=/var"
     "--sysconfdir=/etc"
-    # Always use our Meson, not the bundled version, which doesn't
-    # have our patches and will be subtly broken because of that.
-    "--meson=meson"
     "--cross-prefix=${stdenv.cc.targetPrefix}"
     (lib.enableFeature guestAgentSupport "guest-agent")
   ] ++ lib.optional numaSupport "--enable-numa"
@@ -206,7 +202,7 @@ stdenv.mkDerivation rec {
   preBuild = "cd build";
 
   # tests can still timeout on slower systems
-  inherit doCheck;
+  doCheck = false;
   nativeCheckInputs = [ socat ];
   preCheck = ''
     # time limits are a little meagre for a build machine that's
@@ -220,6 +216,7 @@ stdenv.mkDerivation rec {
 
     # point tests towards correct binaries
     substituteInPlace ../tests/unit/test-qga.c \
+      --replace '/bin/bash' "$(type -P bash)" \
       --replace '/bin/echo' "$(type -P echo)"
     substituteInPlace ../tests/unit/test-io-channel-command.c \
       --replace '/bin/socat' "$(type -P socat)"
@@ -247,7 +244,13 @@ stdenv.mkDerivation rec {
   passthru = {
     qemu-system-i386 = "bin/qemu-system-i386";
     tests = {
-      qemu-tests = qemu.override { doCheck = true; };
+      qemu-tests = finalAttrs.finalPackage.overrideAttrs (_: { doCheck = true; });
+    };
+    updateScript = gitUpdater {
+      # No nicer place to find latest release.
+      url = "https://gitlab.com/qemu-project/qemu.git";
+      rev-prefix = "v";
+      ignoredVersions = "(alpha|beta|rc).*";
     };
   };
 
@@ -262,4 +265,4 @@ stdenv.mkDerivation rec {
     maintainers = with maintainers; [ eelco qyliss ];
     platforms = platforms.unix;
   };
-}
+})

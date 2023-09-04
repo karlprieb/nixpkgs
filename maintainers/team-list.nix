@@ -181,6 +181,19 @@ with lib.maintainers; {
     shortName = "Cosmopolitan";
   };
 
+  dotnet = {
+    members = [
+      ivar
+      mdarocha
+      corngood
+      raphaelr
+      jamiemagee
+      anpin
+    ];
+    scope = "Maintainers of the .NET build tools and packages";
+    shortName = "dotnet";
+  };
+
   deepin = {
     members = [
       rewine
@@ -193,10 +206,11 @@ with lib.maintainers; {
   deshaw = {
     # Verify additions to this team with at least one already existing member of the team.
     members = [
-      limeytexan
+      de11n
+      invokes-su
     ];
     scope = "Group registration for D. E. Shaw employees who collectively maintain packages.";
-    shortName = "Shaw employees";
+    shortName = "D. E. Shaw employees";
   };
 
   determinatesystems = {
@@ -410,13 +424,21 @@ with lib.maintainers; {
     shortName = "Jitsi";
   };
 
+  jupyter = {
+    members = [
+      GaetanLepage
+      natsukium
+    ];
+    scope = "Maintain Jupyter and related packages.";
+    shortName = "Jupyter";
+  };
+
   kubernetes = {
     members = [
       johanot
       offline
       saschagrunert
       srhb
-      zowoq
     ];
     scope = "Maintain the Kubernetes package and module";
     shortName = "Kubernetes";
@@ -570,6 +592,7 @@ with lib.maintainers; {
       ralith
       dandellion
       sumnerevans
+      nickcao
     ];
     scope = "Maintain the ecosystem around Matrix, a decentralized messenger.";
     shortName = "Matrix";
@@ -658,6 +681,17 @@ with lib.maintainers; {
     shortName = "OpenStack";
   };
 
+  ororatech = {
+    # email: nixdevs@ororatech.com
+    shortName = "OroraTech GmbH. employees";
+    scope = "Team for packages maintained by employees of OroraTech GmbH.";
+    # Edits to this list should only be done by an already existing member.
+    members = [
+      kip93
+      victormeriqui
+    ];
+  };
+
   pantheon = {
     members = [
       davidak
@@ -702,7 +736,6 @@ with lib.maintainers; {
       adisbladis
       saschagrunert
       vdemeester
-      zowoq
     ];
     githubTeams = [
       "podman"
@@ -724,6 +757,7 @@ with lib.maintainers; {
       fridh
       hexa
       jonringer
+      tjni
     ];
     scope = "Maintain the Python interpreter and related packages.";
     shortName = "Python";
@@ -820,9 +854,7 @@ with lib.maintainers; {
   };
 
   sphinx = {
-    members = [
-      SuperSandro2000
-    ];
+    members = [ ];
     scope = "Maintain Sphinx related packages.";
     shortName = "Sphinx";
   };
@@ -883,6 +915,16 @@ with lib.maintainers; {
     ];
     scope = "Maintain Xfce desktop environment and related packages.";
     shortName = "Xfce";
+    enableFeatureFreezePing = true;
+  };
+
+  zig = {
+    members = [
+      AndersonTorres
+      figsoda
+    ];
+    scope = "Maintain the Zig compiler toolchain and nixpkgs integration.";
+    shortName = "Zig";
     enableFeatureFreezePing = true;
   };
 }

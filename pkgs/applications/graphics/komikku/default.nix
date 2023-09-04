@@ -19,7 +19,7 @@
 
 python3.pkgs.buildPythonApplication rec {
   pname = "komikku";
-  version = "1.21.1";
+  version = "1.23.0";
 
   format = "other";
 
@@ -27,7 +27,7 @@ python3.pkgs.buildPythonApplication rec {
     owner = "valos";
     repo = "Komikku";
     rev = "v${version}";
-    hash = "sha256-1VqV0tTI8XVwGJhaGWEdSxtWDhQFmrsncvhC4ftJ7Jg=";
+    hash = "sha256-duWAOod2co62NJ5Jk+7eWTf2LcfV5ZbFw0BhrbdGdUY=";
   };
 
   nativeBuildInputs = [
@@ -47,7 +47,6 @@ python3.pkgs.buildPythonApplication rec {
     libadwaita
     libnotify
     webkitgtk_6_0
-    gobject-introspection
   ];
 
   propagatedBuildInputs = with python3.pkgs; [
@@ -81,15 +80,14 @@ python3.pkgs.buildPythonApplication rec {
   '';
 
   passthru = {
-    updateScript = nix-update-script {
-      attrPath = "komikku";
-    };
+    updateScript = nix-update-script { };
   };
 
   meta = with lib; {
     description = "Manga reader for GNOME";
     homepage = "https://valos.gitlab.io/Komikku/";
     license = licenses.gpl3Plus;
+    changelog = "https://gitlab.com/valos/Komikku/-/releases/v${version}";
     maintainers = with maintainers; [ chuangzhu infinitivewitch ];
   };
 }

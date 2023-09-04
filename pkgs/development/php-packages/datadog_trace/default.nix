@@ -12,7 +12,7 @@
 }:
 
 buildPecl rec {
-  pname = "datadog_trace";
+  pname = "ddtrace";
   version = "0.89.0";
 
   src = fetchFromGitHub {
@@ -35,11 +35,18 @@ buildPecl rec {
   nativeBuildInputs = [
     cargo
     rustc
+  ] ++ lib.optionals stdenv.isLinux [
+    rustPlatform.bindgenHook
+    rustPlatform.cargoSetupHook
+  ] ++ lib.optionals stdenv.isDarwin [
     darwin.apple_sdk_11_0.rustPlatform.bindgenHook
     darwin.apple_sdk_11_0.rustPlatform.cargoSetupHook
   ];
 
-  buildInputs = [ curl pcre2 ] ++ lib.optionals stdenv.isDarwin [
+  buildInputs = [
+    curl
+    pcre2
+  ] ++ lib.optionals stdenv.isDarwin [
     darwin.apple_sdk_11_0.frameworks.CoreFoundation
     darwin.apple_sdk_11_0.frameworks.Security
     darwin.apple_sdk_11_0.Libsystem

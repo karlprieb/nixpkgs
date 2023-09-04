@@ -2,17 +2,17 @@
 
 buildGoModule rec {
   pname = "tempo";
-  version = "2.1.1";
+  version = "2.2.1";
 
   src = fetchFromGitHub {
     owner = "grafana";
     repo = "tempo";
     rev = "v${version}";
     fetchSubmodules = true;
-    sha256 = "sha256-gnQAldqfxJk8kbXAyX1VQXddCnSBWnvc3wesYoYI7wI=";
+    hash = "sha256-ols6cYKd1FVRG/fbq+oXst18eCQ3+V2032m03t3DvEc=";
   };
 
-  vendorSha256 = null;
+  vendorHash = null;
 
   subPackages = [
     "cmd/tempo-cli"

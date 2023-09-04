@@ -6,13 +6,13 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "cargo-llvm-cov";
-  version = "0.5.23";
+  version = "0.5.31";
 
   src = fetchCrate {
     inherit pname version;
-    sha256 = "sha256-sAuarLfvgX6qjZV2eum3+wY5gRiCbRSbJUBgFIHd8y0=";
+    sha256 = "sha256-HjnP9H1t660PJ5eXzgAhrdDEgqdzzb+9Dbk5RGUPjaQ=";
   };
-  cargoSha256 = "sha256-gGzVQqPHvjERvQV2Yo3wFP7n/w3atuLrHSch1CWui4I=";
+  cargoSha256 = "sha256-p6zpRRNX4g+jESNSwouWMjZlFhTBFJhe7LirYtFrZ1g=";
 
   # skip tests which require llvm-tools-preview
   checkFlags = [
@@ -39,6 +39,6 @@ rustPlatform.buildRustPackage rec {
       library (e.g. fenix or rust-overlay)
     '';
     license = with lib.licenses; [ asl20 /* or */ mit ];
-    maintainers = with lib.maintainers; [ wucke13 ];
+    maintainers = with lib.maintainers; [ wucke13 matthiasbeyer ];
   };
 }

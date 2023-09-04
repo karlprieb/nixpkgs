@@ -10,16 +10,16 @@
 
 buildGoModule rec {
   pname = "buf";
-  version = "1.23.1";
+  version = "1.26.1";
 
   src = fetchFromGitHub {
     owner = "bufbuild";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-6Zp4QuH0wJQCt8w2230Ugrds8tFmnCcICxgWJiqTBWc=";
+    hash = "sha256-e00o3G66GCJyA3flqRa+J1yQVBVusBrEOJrL9viKtlM=";
   };
 
-  vendorHash = "sha256-e4frrLrG6OxOUcr5iqY+QEokdy95glmc3Rw2HPWUPEI=";
+  vendorHash = "sha256-7RVYD0r3nqb0yLmKu9zzpQNiVDVBJGG1BiVb6J+VR9k=";
 
   patches = [
     # Skip a test that requires networking to be available to work.

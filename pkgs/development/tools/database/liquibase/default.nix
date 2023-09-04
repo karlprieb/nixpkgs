@@ -25,11 +25,11 @@ in
 
 stdenv.mkDerivation rec {
   pname = "liquibase";
-  version = "4.23.0";
+  version = "4.23.1";
 
   src = fetchurl {
     url = "https://github.com/liquibase/liquibase/releases/download/v${version}/${pname}-${version}.tar.gz";
-    hash = "sha256-mIuHNNo/L5h2RvpTN0jZt6ri+Il0H9aSL4auOjIepjU=";
+    hash = "sha256-uWZ9l6C6QlVHqp/ma6/sz07zuCHpGucy7GhNDq8v1/U=";
   };
 
   nativeBuildInputs = [ makeWrapper ];
@@ -48,7 +48,10 @@ stdenv.mkDerivation rec {
     in
     ''
       mkdir -p $out
-      mv ./{lib,licenses,internal/lib/liquibase-core.jar,internal/lib/postgresql.jar,internal/lib/picocli.jar} $out/
+      mv ./{lib,licenses} $out/
+
+      mkdir -p $out/internal/lib
+      mv ./internal/lib/*.jar $out/internal/lib/
 
       mkdir -p $out/share/doc/${pname}-${version}
       mv LICENSE.txt \
@@ -63,12 +66,12 @@ stdenv.mkDerivation rec {
       #!/usr/bin/env bash
       # taken from the executable script in the source
       CP=""
+      ${addJars "$out/internal/lib"}
       ${addJars "$out/lib"}
       ${addJars "$out"}
       ${lib.concatStringsSep "\n" (map (p: addJars "${p}/share/java") extraJars)}
-
       ${lib.getBin jre}/bin/java -cp "\$CP" \$JAVA_OPTS \
-        liquibase.integration.commandline.LiquibaseCommandLine \''${1+"\$@"}
+      liquibase.integration.commandline.LiquibaseCommandLine \''${1+"\$@"}
       EOF
       chmod +x $out/bin/liquibase
     '';

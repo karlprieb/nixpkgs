@@ -7,6 +7,7 @@ let
 
   defaultUser = "paperless";
   nltkDir = "/var/cache/paperless/nltk";
+  defaultFont = "${pkgs.liberation_ttf}/share/fonts/truetype/LiberationSerif-Regular.ttf";
 
   # Don't start a redis instance if the user sets a custom redis connection
   enableRedis = !hasAttr "PAPERLESS_REDIS" cfg.extraConfig;
@@ -17,6 +18,7 @@ let
     PAPERLESS_MEDIA_ROOT = cfg.mediaDir;
     PAPERLESS_CONSUMPTION_DIR = cfg.consumptionDir;
     PAPERLESS_NLTK_DIR = nltkDir;
+    PAPERLESS_THUMBNAIL_FONT_NAME = defaultFont;
     GUNICORN_CMD_ARGS = "--bind=${cfg.address}:${toString cfg.port}";
   } // optionalAttrs (config.time.timeZone != null) {
     PAPERLESS_TIME_ZONE = config.time.timeZone;
@@ -26,14 +28,11 @@ let
     lib.mapAttrs (_: toString) cfg.extraConfig
   );
 
-  manage =
-    let
-      setupEnv = lib.concatStringsSep "\n" (mapAttrsToList (name: val: "export ${name}=\"${val}\"") env);
-    in
-    pkgs.writeShellScript "manage" ''
-      ${setupEnv}
-      exec ${pkg}/bin/paperless-ngx "$@"
-    '';
+  manage = pkgs.writeShellScript "manage" ''
+    set -o allexport # Export the following env vars
+    ${lib.toShellVars env}
+    exec ${pkg}/bin/paperless-ngx "$@"
+  '';
 
   # Secure the services
   defaultServiceConfig = {
@@ -44,6 +43,8 @@ let
       "-/etc/nsswitch.conf"
       "-/etc/hosts"
       "-/etc/localtime"
+      "-/etc/ssl/certs"
+      "-/etc/static/ssl/certs"
       "-/run/postgresql"
     ] ++ (optional enableRedis redisServer.unixSocket);
     BindPaths = [
@@ -172,19 +173,32 @@ in
       description = lib.mdDoc "Web interface port.";
     };
 
+    # FIXME this should become an RFC42-style settings attr
     extraConfig = mkOption {
       type = types.attrs;
       default = { };
       description = lib.mdDoc ''
         Extra paperless config options.
 
-        See [the documentation](https://paperless-ngx.readthedocs.io/en/latest/configuration.html)
+        See [the documentation](https://docs.paperless-ngx.com/configuration/)
         for available options.
+
+        Note that some options such as `PAPERLESS_CONSUMER_IGNORE_PATTERN` expect JSON values. Use `builtins.toJSON` to ensure proper quoting.
       '';
-      example = {
-        PAPERLESS_OCR_LANGUAGE = "deu+eng";
-        PAPERLESS_DBHOST = "/run/postgresql";
-      };
+      example = literalExpression ''
+        {
+          PAPERLESS_OCR_LANGUAGE = "deu+eng";
+
+          PAPERLESS_DBHOST = "/run/postgresql";
+
+          PAPERLESS_CONSUMER_IGNORE_PATTERN = builtins.toJSON [ ".DS_STORE/*" "desktop.ini" ];
+
+          PAPERLESS_OCR_USER_ARGS = builtins.toJSON {
+            optimize = 1;
+            pdfa_image_compression = "lossless";
+          };
+        };
+      '';
     };
 
     user = mkOption {

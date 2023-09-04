@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "goldendict";
     repo = pname;
-    rev = "v${version}";
+    rev = version;
     hash = "sha256-80o8y+mbzpyMQYUGHYs/zgQT23nLVCs7Jcr8FbbXn8M=";
   };
 
@@ -63,6 +63,7 @@ stdenv.mkDerivation rec {
     homepage = "http://goldendict.org/";
     description = "A feature-rich dictionary lookup program";
     platforms = with platforms; linux ++ darwin;
+    mainProgram = "goldendict";
     maintainers = with maintainers; [ gebner astsmtl sikmir ];
     license = licenses.gpl3Plus;
   };

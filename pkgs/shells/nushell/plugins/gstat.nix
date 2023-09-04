@@ -11,9 +11,9 @@ let
 in
 rustPlatform.buildRustPackage {
   inherit pname;
-  version = nushell.version;
+  version = "0.84.0";
   src = nushell.src;
-  cargoHash = "sha256-+RFCkM++6DgrwFjTr3JlCgh9FqDBUOQsOucbZAi+V/k=";
+  cargoHash = "sha256-RcwCYfIEV0+NbZ99uWaCOLqLap3wZ4qXIsc02fqkBSQ=";
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ openssl ];
   cargoBuildFlags = [ "--package nu_plugin_gstat" ];

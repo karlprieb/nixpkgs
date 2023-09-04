@@ -19,6 +19,7 @@
 , at-spi2-core
 , autoPatchelfHook
 , wrapGAppsHook
+, makeWrapper
 }:
 
 let
@@ -42,7 +43,8 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [
     autoPatchelfHook
-    wrapGAppsHook
+    # makeBinaryWrapper not support shell wrapper specifically for `NIXOS_OZONE_WL`.
+    (wrapGAppsHook.override { inherit makeWrapper; })
     dpkg
   ];
 
@@ -79,6 +81,9 @@ stdenv.mkDerivation {
     # Remove bundled libraries
     rm -r $out/opt/QQ/resources/app/sharp-lib
 
+    # https://aur.archlinux.org/cgit/aur.git/commit/?h=linuxqq&id=f7644776ee62fa20e5eb30d0b1ba832513c77793
+    rm -r $out/opt/QQ/resources/app/libssh2.so.1
+
     # https://github.com/microcai/gentoo-zh/commit/06ad5e702327adfe5604c276635ae8a373f7d29e
     ln -s ${libayatana-appindicator}/lib/libayatana-appindicator3.so \
       $out/opt/QQ/libappindicator3.so
@@ -87,7 +92,10 @@ stdenv.mkDerivation {
   '';
 
   preFixup = ''
-    gappsWrapperArgs+=(--prefix PATH : "${lib.makeBinPath [ gjs ]}")
+    gappsWrapperArgs+=(
+      --prefix PATH : "${lib.makeBinPath [ gjs ]}"
+      --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}"
+    )
   '';
 
   meta = with lib; {

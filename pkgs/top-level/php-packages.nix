@@ -169,6 +169,8 @@ lib.makeScope pkgs.newScope (self: with self; {
   tools = {
     box = callPackage ../development/php-packages/box { };
 
+    castor = callPackage ../development/php-packages/castor { };
+
     composer = callPackage ../development/php-packages/composer { };
 
     deployer = callPackage ../development/php-packages/deployer { };
@@ -254,6 +256,8 @@ lib.makeScope pkgs.newScope (self: with self; {
 
     oci8 = callPackage ../development/php-packages/oci8 { };
 
+    opentelemetry = callPackage ../development/php-packages/opentelemetry { };
+
     openswoole = callPackage ../development/php-packages/openswoole { };
 
     pdlib = callPackage ../development/php-packages/pdlib { };
@@ -292,7 +296,9 @@ lib.makeScope pkgs.newScope (self: with self; {
 
     smbclient = callPackage ../development/php-packages/smbclient { };
 
-    snuffleupagus = callPackage ../development/php-packages/snuffleupagus { };
+    snuffleupagus = callPackage ../development/php-packages/snuffleupagus {
+      inherit (pkgs) darwin;
+    };
 
     sqlsrv = callPackage ../development/php-packages/sqlsrv { };
 
@@ -301,6 +307,8 @@ lib.makeScope pkgs.newScope (self: with self; {
     swoole = callPackage ../development/php-packages/swoole { };
 
     uv = callPackage ../development/php-packages/uv { };
+
+    vld = callPackage ../development/php-packages/vld { };
 
     xdebug = callPackage ../development/php-packages/xdebug { };
 
