@@ -80,7 +80,7 @@ in
     dartHash = {
       x86_64-linux = "sha256-sGpRyuUTkZ0cpG/O21NCHaOsQRjNklsl9G6Ia1tZxAw=";
       aarch64-linux = "sha256-wcDtL/Lh0NFC01QlnKwx8ovTHZ5ww+rb1sELn92R1uU=";
-      x86_64-darwin = "sha256-h+e7ABlLWCxc6wrbjiy5lgp6O/DnNKdXFNJtgnXBZNA=";
+      x86_64-darwin = "sha256-Q5/FKu9hkvvdtZFj2JhoU1VrLr2BPlT7+VHX1xSsYkQ=";
       aarch64-darwin = "sha256-EzZOWU/yFQJLjX8ukwhUrWs6Vj4QJ5oVQc5KDC66dTc=";
     };
     flutterHash = rec {
